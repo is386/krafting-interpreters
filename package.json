@@ -1,0 +1,37 @@
+{
+  "name": "krafting-interpreters",
+  "version": "1.0.0",
+  "description": "Interpreter made while following the book Crafting Interpreters",
+  "repository": "git@github.com:is386/pokemon-smackdown.git",
+  "author": "is386 <singh.indervir89@gmail.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist/",
+    "lint": "eslint --max-warnings 0",
+    "start": "tsx src/app.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.24.0",
+    "@eslint/json": "^0.11.0",
+    "@tsconfig/node22": "^22.0.1",
+    "@types/node": "^22.14.1",
+    "eslint": "^9.24.0",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-prettier": "^5.2.6",
+    "globals": "^16.0.0",
+    "husky": "^9.1.7",
+    "lerna": "^8.2.2",
+    "prettier": "3.5.3",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.29.1"
+  },
+  "lint-staged": {
+    "*.{js,json,ts}": [
+      "eslint --fix --no-warn-ignored",
+      "prettier --write"
+    ]
+  }
+}
