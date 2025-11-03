@@ -1,7 +1,7 @@
 {
-  "name": "krafting-interpreters",
+  "name": "tslox",
   "version": "1.0.0",
-  "description": "Interpreter made while following the book Crafting Interpreters",
+  "description": "Lox interpreter written in Typescript",
   "repository": "git@github.com:is386/pokemon-smackdown.git",
   "author": "is386 <singh.indervir89@gmail.com>",
   "license": "UNLICENSED",
