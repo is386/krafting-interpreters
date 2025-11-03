@@ -10,7 +10,8 @@
     "build": "tsc",
     "clean": "rm -rf dist/",
     "lint": "eslint --max-warnings 0",
-    "start": "tsx src/app.ts"
+    "start": "tsx src/app.ts",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@eslint/js": "^9.24.0",
