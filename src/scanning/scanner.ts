@@ -77,7 +77,12 @@ export class Scanner {
         this.addToken(TokenType.SEMICOLON);
         break;
       case '*':
-        this.addToken(TokenType.STAR);
+        if (this.peek() == '/') {
+          this.advance();
+          logError(this.line, 'Unterminated block comment.');
+        } else {
+          this.addToken(TokenType.STAR);
+        }
         break;
       case '!':
         this.addToken(
@@ -157,12 +162,44 @@ export class Scanner {
 
   private scanSlash(): void {
     if (this.advanceIfMatch('/')) {
-      while (this.peek() != '\n' && !this.isAtEnd()) {
-        this.advance();
-      }
+      this.scanComment();
+      return;
+    } else if (this.advanceIfMatch('*')) {
+      this.scanBlockComment();
       return;
     }
+
     this.addToken(TokenType.SLASH);
+  }
+
+  private scanComment(): void {
+    while (this.peek() != '\n' && !this.isAtEnd()) {
+      this.advance();
+    }
+  }
+
+  private scanBlockComment(): void {
+    while (!this.isAtEnd()) {
+      if (this.peek() == '*' && this.peekNext() == '/') {
+        break;
+      } else if (this.peek() == '/' && this.peekNext() == '*') {
+        this.advance();
+        this.advance();
+        this.scanBlockComment();
+        continue;
+      } else if (this.peek() == '\n') {
+        this.line++;
+      }
+      this.advance();
+    }
+
+    if (this.isAtEnd()) {
+      logError(this.line, 'Unterminated block comment.');
+      return;
+    }
+
+    this.advance();
+    this.advance();
   }
 
   private scanString(): void {
