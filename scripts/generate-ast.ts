@@ -11,10 +11,10 @@ function main(): void {
   }
 
   defineAst(args[2], 'Expr', [
-    'Binary   : left: Expr, operator: Token, right: Expr',
-    'Grouping : expression: Expr',
-    'Literal  : value: unknown',
-    'Unary    : operator: Token, right: Expr',
+    'Binary   | left: Expr, operator: Token, right: Expr',
+    'Grouping | expression: Expr',
+    'Literal  | value: unknown',
+    'Unary    | operator: Token, right: Expr',
   ]);
 }
 
@@ -24,17 +24,32 @@ function defineAst(outputDir: string, baseName: string, types: string[]): void {
   // Imports
   writeFileSync(path, "import { Token } from '../scanning/token';\n\n", 'utf8');
 
-  // Base Expression Class
-  writeLine(`export class ${baseName} {`);
+  // Visitor
+  defineVisitor(baseName, types);
   writeLine();
+
+  // Base Expression Class
+  writeLine(`export abstract class ${baseName} {`);
+  writeLine(`abstract accept<R>(visitor: Visitor<R>): R;`);
   writeLine('}');
   writeLine();
 
   types.forEach((type) => {
-    const className = type.split(' : ')[0].trim();
-    const fields = type.split(' : ')[1].trim();
+    const className = type.split('|')[0].trim();
+    const fields = type.split('|')[1].trim();
     defineType(baseName, className, fields);
   });
+}
+
+function defineVisitor(baseName: string, types: string[]): void {
+  writeLine('export interface Visitor<R> {');
+  types.forEach((type) => {
+    const typeName = type.split('|')[0].trim();
+    writeLine(
+      `visit${typeName}${baseName}(${baseName.toLowerCase()}: ${typeName}): R;`
+    );
+  });
+  writeLine('}');
 }
 
 function defineType(
@@ -48,18 +63,24 @@ function defineType(
   // Static Fields
   const fields = fieldList.split(', ');
   fields.forEach((field) => {
-    writeLine(`  static ${field};`);
+    writeLine(`${field};`);
   });
   writeLine();
 
   // Constructor
-  writeLine(`  constructor(${fieldList}) {`);
-  writeLine('    super();');
+  writeLine(`constructor(${fieldList}) {`);
+  writeLine('super();');
   fields.forEach((field) => {
     const name = field.split(': ')[0];
-    writeLine(`    ${className}.${name} = ${name};`);
+    writeLine(`this.${name} = ${name};`);
   });
-  writeLine('  }');
+  writeLine('}');
+  writeLine();
+
+  // Visitor Pattern
+  writeLine(`accept<R>(visitor: Visitor<R>): R {`);
+  writeLine(`return visitor.visit${className}${baseName}(this);`);
+  writeLine('}');
 
   writeLine('}');
   writeLine();
