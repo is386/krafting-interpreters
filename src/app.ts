@@ -3,6 +3,8 @@ import { exit } from 'process';
 import { createInterface } from 'readline';
 import { clearError, hadError } from './error';
 import { Scanner } from './scanning/scanner';
+import { Parser } from './parsing/parser';
+import { AstPrinter } from './parsing/ast-printer';
 
 function main(): void {
   const args = process.argv;
@@ -46,7 +48,13 @@ async function runPrompt(): Promise<void> {
 function run(source: string): void {
   const scanner = new Scanner(source);
   const tokens = scanner.scanTokens();
-  console.log(tokens);
+
+  const parser = new Parser(tokens);
+  const expr = parser.parse();
+
+  if (hadError() || !expr) return;
+
+  console.log(new AstPrinter().print(expr));
 }
 
 main();
