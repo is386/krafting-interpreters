@@ -196,7 +196,7 @@ export class Scanner {
       }
     }
 
-    const num = this.source.substring(this.start, this.current);
+    const num = parseFloat(this.source.substring(this.start, this.current));
     this.addToken(TokenType.NUMBER, num);
   }
 

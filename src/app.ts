@@ -4,7 +4,9 @@ import { createInterface } from 'readline';
 import { clearError, hadError } from './error';
 import { Scanner } from './scanning/scanner';
 import { Parser } from './parsing/parser';
-import { AstPrinter } from './parsing/ast-printer';
+import { Interpreter } from './interpreting/interpreter';
+
+const interpreter = new Interpreter();
 
 function main(): void {
   const args = process.argv;
@@ -54,7 +56,7 @@ function run(source: string): void {
 
   if (hadError() || !expr) return;
 
-  console.log(new AstPrinter().print(expr));
+  interpreter.interpret(expr);
 }
 
 main();
