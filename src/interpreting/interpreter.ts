@@ -36,8 +36,8 @@ export class Interpreter implements Visitor<unknown> {
         if (typeof left === 'number' && typeof right === 'number') {
           return left + right;
         }
-        if (typeof left === 'string' && typeof right === 'string') {
-          return left + right;
+        if (typeof left === 'string' || typeof right === 'string') {
+          return (left as string) + (right as string);
         }
         throw new RuntimeError(
           expr.operator,
