@@ -1,17 +1,17 @@
 import { Token } from '../scanning/token';
 
 export interface Visitor<R> {
-  visitBinaryExpr(expr: Binary): R;
-  visitGroupingExpr(expr: Grouping): R;
-  visitLiteralExpr(expr: Literal): R;
-  visitUnaryExpr(expr: Unary): R;
+  visitBinaryExpr(expr: BinaryExpr): R;
+  visitGroupingExpr(expr: GroupingExpr): R;
+  visitLiteralExpr(expr: LiteralExpr): R;
+  visitUnaryExpr(expr: UnaryExpr): R;
 }
 
 export abstract class Expr {
   abstract accept<R>(visitor: Visitor<R>): R;
 }
 
-export class Binary extends Expr {
+export class BinaryExpr extends Expr {
   left: Expr;
   operator: Token;
   right: Expr;
@@ -28,7 +28,7 @@ export class Binary extends Expr {
   }
 }
 
-export class Grouping extends Expr {
+export class GroupingExpr extends Expr {
   expression: Expr;
 
   constructor(expression: Expr) {
@@ -41,7 +41,7 @@ export class Grouping extends Expr {
   }
 }
 
-export class Literal extends Expr {
+export class LiteralExpr extends Expr {
   value: unknown;
 
   constructor(value: unknown) {
@@ -54,7 +54,7 @@ export class Literal extends Expr {
   }
 }
 
-export class Unary extends Expr {
+export class UnaryExpr extends Expr {
   operator: Token;
   right: Expr;
 

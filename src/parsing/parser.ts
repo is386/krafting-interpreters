@@ -1,5 +1,5 @@
 import { Token } from '../scanning/token';
-import { Binary, Expr, Grouping, Literal, Unary } from './expr';
+import { BinaryExpr, Expr, GroupingExpr, LiteralExpr, UnaryExpr } from './expr';
 import { TokenType } from '../scanning/token-type';
 import { logError } from '../error';
 
@@ -29,7 +29,7 @@ export class Parser {
     while (this.match(TokenType.BANG_EQUAL, TokenType.EQUAL_EQUAL)) {
       const operator = this.peekPrevious();
       const right = this.comparison();
-      expr = new Binary(expr, operator, right);
+      expr = new BinaryExpr(expr, operator, right);
     }
 
     return expr;
@@ -48,7 +48,7 @@ export class Parser {
     ) {
       const operator = this.peekPrevious();
       const right = this.term();
-      expr = new Binary(expr, operator, right);
+      expr = new BinaryExpr(expr, operator, right);
     }
 
     return expr;
@@ -60,7 +60,7 @@ export class Parser {
     while (this.match(TokenType.MINUS, TokenType.PLUS)) {
       const operator = this.peekPrevious();
       const right = this.factor();
-      expr = new Binary(expr, operator, right);
+      expr = new BinaryExpr(expr, operator, right);
     }
 
     return expr;
@@ -72,7 +72,7 @@ export class Parser {
     while (this.match(TokenType.SLASH, TokenType.STAR)) {
       const operator = this.peekPrevious();
       const right = this.unary();
-      expr = new Binary(expr, operator, right);
+      expr = new BinaryExpr(expr, operator, right);
     }
 
     return expr;
@@ -82,7 +82,7 @@ export class Parser {
     while (this.match(TokenType.BANG, TokenType.MINUS)) {
       const operator = this.peekPrevious();
       const right = this.primary();
-      return new Unary(operator, right);
+      return new UnaryExpr(operator, right);
     }
 
     return this.primary();
@@ -90,25 +90,25 @@ export class Parser {
 
   private primary(): Expr {
     if (this.match(TokenType.FALSE)) {
-      return new Literal(false);
+      return new LiteralExpr(false);
     }
 
     if (this.match(TokenType.TRUE)) {
-      return new Literal(true);
+      return new LiteralExpr(true);
     }
 
     if (this.match(TokenType.NIL)) {
-      return new Literal(null);
+      return new LiteralExpr(null);
     }
 
     if (this.match(TokenType.NUMBER, TokenType.STRING)) {
-      return new Literal(this.peekPrevious().literal);
+      return new LiteralExpr(this.peekPrevious().literal);
     }
 
     if (this.match(TokenType.LEFT_PAREN)) {
       const expr = this.expression();
       this.consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
-      return new Grouping(expr);
+      return new GroupingExpr(expr);
     }
 
     logError(this.peek().line, 'Expect expression.');

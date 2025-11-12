@@ -1,26 +1,33 @@
-import { Binary, Expr, Grouping, Literal, Unary, Visitor } from './expr';
+import {
+  BinaryExpr,
+  Expr,
+  GroupingExpr,
+  LiteralExpr,
+  UnaryExpr,
+  Visitor,
+} from './expr';
 
 export class AstPrinter implements Visitor<string> {
   print(expr: Expr) {
     return expr.accept(this);
   }
 
-  visitBinaryExpr(expr: Binary): string {
+  visitBinaryExpr(expr: BinaryExpr): string {
     return this.parenthesize(expr.operator.lexeme, expr.left, expr.right);
   }
 
-  visitGroupingExpr(expr: Grouping): string {
+  visitGroupingExpr(expr: GroupingExpr): string {
     return this.parenthesize('group', expr.expression);
   }
 
-  visitLiteralExpr(expr: Literal): string {
+  visitLiteralExpr(expr: LiteralExpr): string {
     if (!expr.value) {
       return 'nil';
     }
     return expr.value as string;
   }
 
-  visitUnaryExpr(expr: Unary): string {
+  visitUnaryExpr(expr: UnaryExpr): string {
     return this.parenthesize(expr.operator.lexeme, expr.right);
   }
 

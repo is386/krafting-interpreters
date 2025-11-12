@@ -1,10 +1,10 @@
 import { logError } from '../error';
 import {
-  Binary,
+  BinaryExpr,
   Expr,
-  Grouping,
-  Literal,
-  Unary,
+  GroupingExpr,
+  LiteralExpr,
+  UnaryExpr,
   Visitor,
 } from '../parsing/expr';
 import { Token } from '../scanning/token';
@@ -23,7 +23,7 @@ export class Interpreter implements Visitor<unknown> {
     }
   }
 
-  visitBinaryExpr(expr: Binary): unknown {
+  visitBinaryExpr(expr: BinaryExpr): unknown {
     const left = this.evaluate(expr.left);
     const right = this.evaluate(expr.right);
 
@@ -76,15 +76,15 @@ export class Interpreter implements Visitor<unknown> {
     }
   }
 
-  visitGroupingExpr(expr: Grouping): unknown {
+  visitGroupingExpr(expr: GroupingExpr): unknown {
     return this.evaluate(expr.expression);
   }
 
-  visitLiteralExpr(expr: Literal): unknown {
+  visitLiteralExpr(expr: LiteralExpr): unknown {
     return expr.value;
   }
 
-  visitUnaryExpr(expr: Unary): unknown {
+  visitUnaryExpr(expr: UnaryExpr): unknown {
     const right = this.evaluate(expr.right);
 
     switch (expr.operator.type) {

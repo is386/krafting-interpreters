@@ -16,13 +16,27 @@ function main(): void {
     'Literal  | value: unknown',
     'Unary    | operator: Token, right: Expr',
   ]);
+
+  defineAst(args[2], 'Stmt', ['Expression | expr: Expr', 'Print | expr: Expr']);
 }
 
-function defineAst(outputDir: string, baseName: string, types: string[]): void {
-  path = `${outputDir}/expr.ts`;
+function defineAst(
+  outputDir: string,
+  baseName: 'Expr' | 'Stmt',
+  types: string[]
+): void {
+  path = `${outputDir}/${baseName.toLowerCase()}.ts`;
 
   // Imports
-  writeFileSync(path, "import { Token } from '../scanning/token';\n\n", 'utf8');
+  if (baseName === 'Expr') {
+    writeFileSync(
+      path,
+      "import { Token } from '../scanning/token';\n\n",
+      'utf8'
+    );
+  } else if (baseName == 'Stmt') {
+    writeFileSync(path, "import { Expr } from './expr';\n\n", 'utf8');
+  }
 
   // Visitor
   defineVisitor(baseName, types);
@@ -46,7 +60,7 @@ function defineVisitor(baseName: string, types: string[]): void {
   types.forEach((type) => {
     const typeName = type.split('|')[0].trim();
     writeLine(
-      `visit${typeName}${baseName}(${baseName.toLowerCase()}: ${typeName}): R;`
+      `visit${typeName}${baseName}(${baseName.toLowerCase()}: ${typeName}${baseName}): R;`
     );
   });
   writeLine('}');
@@ -58,7 +72,7 @@ function defineType(
   fieldList: string
 ): void {
   // Sub Expression Classes
-  writeLine(`export class ${className} extends ${baseName} {`);
+  writeLine(`export class ${className}${baseName} extends ${baseName} {`);
 
   // Static Fields
   const fields = fieldList.split(', ');
